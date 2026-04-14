@@ -4,7 +4,14 @@
     <title>Feedback Portal</title>
 </head>
 <body>
-    <h2>Submit Feedback!</h2>
+
+    <h2>Upload Document</h2>
+    <input type="file" id="fileInput" />
+    <button onclick="uploadFile()">Upload Document</button>
+
+    <hr>
+
+    <h2>Submit Feedback</h2>
     <input id="name" placeholder="Your Name" />
     <input id="feedback" placeholder="Your Feedback" />
     <button onclick="submitFeedback()">Submit</button>
@@ -15,9 +22,36 @@
 <script>
 const API_BASE = "https://capstone-basim-fa-hphmfbbpfvgwdza3.canadacentral-01.azurewebsites.net/api/feedback";
 
+// Upload file
+async function uploadFile() {
+    const file = document.getElementById("fileInput").files[0];
+
+    if (!file) {
+        alert("Please select a file");
+        return;
+    }
+
+    const text = await file.text();
+
+    await fetch("/api/upload", {
+        method: "POST",
+        headers: { "Content-Type": "text/plain" },
+        body: text
+    });
+
+    alert("File uploaded successfully");
+    loadFeedback(); // optional refresh
+}
+
+// Submit feedback
 async function submitFeedback() {
     const name = document.getElementById("name").value;
     const feedback = document.getElementById("feedback").value;
+
+    if (!name || !feedback) {
+        alert("Please fill all fields");
+        return;
+    }
 
     await fetch(API_BASE, {
         method: "POST",
@@ -25,9 +59,13 @@ async function submitFeedback() {
         body: JSON.stringify({ name, feedback })
     });
 
+    document.getElementById("name").value = "";
+    document.getElementById("feedback").value = "";
+
     loadFeedback();
 }
 
+// Load feedback list
 async function loadFeedback() {
     const res = await fetch(API_BASE);
     const data = await res.json();
@@ -42,7 +80,9 @@ async function loadFeedback() {
     });
 }
 
+// Initial load
 loadFeedback();
 </script>
+
 </body>
 </html>
