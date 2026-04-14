@@ -21,6 +21,7 @@
 
 <script>
 const API_BASE = "https://capstone-basim-fa-hphmfbbpfvgwdza3.canadacentral-01.azurewebsites.net/api/feedback";
+const API_UPLOAD = "https://capstone-basim-fa-hphmfbbpfvgwdza3.canadacentral-01.azurewebsites.net/api/upload"
 
 // Upload file
 async function uploadFile() {
@@ -33,7 +34,7 @@ async function uploadFile() {
 
     const text = await file.text();
 
-    await fetch("/api/upload", {
+    await fetch(API_UPLOAD, {
         method: "POST",
         headers: { "Content-Type": "text/plain" },
         body: text
