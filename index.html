@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Feedback Portal</title>
+</head>
+<body>
+    <h2>Submit Feedback</h2>
+    <input id="name" placeholder="Your Name" />
+    <input id="feedback" placeholder="Your Feedback" />
+    <button onclick="submitFeedback()">Submit</button>
+
+    <h3>Feedback List</h3>
+    <ul id="list"></ul>
+
+<script>
+const API_BASE = "/api/feedback";
+
+async function submitFeedback() {
+    const name = document.getElementById("name").value;
+    const feedback = document.getElementById("feedback").value;
+
+    await fetch(API_BASE, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, feedback })
+    });
+
+    loadFeedback();
+}
+
+async function loadFeedback() {
+    const res = await fetch(API_BASE);
+    const data = await res.json();
+
+    const list = document.getElementById("list");
+    list.innerHTML = "";
+
+    data.forEach(item => {
+        const li = document.createElement("li");
+        li.innerText = item.name + ": " + item.feedback;
+        list.appendChild(li);
+    });
+}
+
+loadFeedback();
+</script>
+</body>
+</html>
